@@ -1,12 +1,15 @@
 const { interval } = require('rxjs');
-const { tap, take, bufferToggle } = require('rxjs/operators');
+const { tap, take, bufferWhen } = require('rxjs/operators');
 
-const opening = interval(400).pipe(tap(() => console.log('open')))
-const closing = ()=>interval(300).pipe(tap(() => console.log('close')))
-
-interval(200)
+let x= 0;
+interval(500)
 .pipe(
-    tap((x)=>console.log(x)),
-    bufferToggle(opening, closing),
-    take(3)
+    tap((i)=>(w=i)),
+    bufferWhen(()=>{
+        if(x<5){
+            return interval(1000)
+        }
+        return interval(500)
+    }),
+    take(10)
 ).subscribe((seq)=>console.log(seq))
